@@ -1,3 +1,8 @@
+/**
+ * @format
+ * All the reusable functions here
+ */
+
 import moment from 'moment';
 
 export function newDate(date) {

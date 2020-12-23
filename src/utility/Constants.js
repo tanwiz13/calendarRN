@@ -1,3 +1,7 @@
+/**
+ * @format
+ * All the reusable constants here
+ */
 module.exports = {
     CALENDAR_THEME: {
         HEADER_THEME: {
