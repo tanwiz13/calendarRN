@@ -1,0 +1,6 @@
+module Pods_calendarRN {
+  umbrella header "Pods-calendarRN-umbrella.h"
+
+  export *
+  module * { export * }
+}
