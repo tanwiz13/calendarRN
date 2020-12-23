@@ -1,5 +1,5 @@
-import React, { Component, PureComponent } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image, FlatList, Dimensions, ActivityIndicator, Platform, UIManager, LayoutAnimation } from 'react-native'
+import React, { PureComponent } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, Image, FlatList, Dimensions, Platform, UIManager, LayoutAnimation } from 'react-native'
 import { Calendar } from 'react-native-calendars';
 import moment from 'moment';
 import constant from '../utility/Constants'
@@ -8,9 +8,8 @@ import ImagePath from '../utility/ImagePath';
 
 const { width } = Dimensions.get('window')
 
-class CustomCalendar extends Component {
+class CustomCalendar extends PureComponent {
 
-  
   constructor(props) {
     super(props)
     this.state = {
@@ -28,6 +27,7 @@ class CustomCalendar extends Component {
     if (Platform.OS == "android" && UIManager.setLayoutAnimationEnabledExperimental) {
         UIManager.setLayoutAnimationEnabledExperimental(true);
     };
+
     this.state.HolidayList.forEach((item)=>{
       this.state.agendaList.set(item, {
         name: item, 
@@ -42,8 +42,10 @@ class CustomCalendar extends Component {
       let currentAgenda = this.state.agendaList.get(this.state.selectedDate);
       this.setState({calendarHolidays: currentAgenda.agendas});
     }
-  }
+  };
 
+
+  // Setting different colours for different day components according to cases - disable, selected, holiday
   getDayColor = (isDisabled, date) => {
     const isHoliday = this.state.HolidayList.length != 0 && this.state.HolidayList.includes(date.dateString)
     const isSunday = new Date(date.dateString).getDay() === 0
@@ -64,7 +66,6 @@ class CustomCalendar extends Component {
   };
 
   onDayPress = (date) => {
-
     if(this.state.agendaList.has(date.dateString)){
       let selectedAgenda = this.state.agendaList.get(date.dateString);
       LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
@@ -90,12 +91,14 @@ class CustomCalendar extends Component {
     onPress()
   };
 
+  // component to render a day in calendar
   renderDayComponent = (date, state) => {
     const selectedDateStyle = styles.date;
     const startOfMonth = moment(this.state.currentMonth).clone().startOf('month').format('YYYY-MM-DD');
     const endOfMonth = moment(this.state.currentMonth).clone().endOf('month').format('YYYY-MM-DD');
     const curDateString = moment(date.dateString).format('YYYY-MM-DD');
     let isDisabled;
+    //disabling dates which are less than 1st of the current month and greater than last of the current month
     if(utils.isBefore(curDateString, startOfMonth) || utils.isAfter(curDateString, endOfMonth)) {
       isDisabled = true;
     }
@@ -135,6 +138,7 @@ class CustomCalendar extends Component {
     );
   };
 
+  // component to render the arrows that are shown besides the Current month
   renderArrow = (side) => {
     const leftArrowSource = ImagePath.CALENDAR_LEFT
     const source = side === 'right' ? ImagePath.CALENDAR_RIGHT : leftArrowSource
@@ -145,15 +149,7 @@ class CustomCalendar extends Component {
     )
   };
 
-  shouldComponentUpdate = (nextProps, nextState) => {
-    console.log(nextState.selectedDate)
-    console.log(this.state.selectedDate)
-    // if(nextState.selectedDate != this.state.selectedDate){
-    //   return true;
-    // }
-    return true;
-  }
-
+  // component to render an agenda or a holiday
   cardView = (item) => {
     let timings = item.type == 'agenda' ? `${item.from} - ${item.to}` : 'All day';
     return (
@@ -171,10 +167,11 @@ class CustomCalendar extends Component {
   };
 
   onPressViewCalendar = () => {
-    this.setState({viewCalendar: !this.state.viewCalendar , currentMonth: utils.newDate('new'), selectedDate: '' });
+    this.setState({viewCalendar: !this.state.viewCalendar , currentMonth: utils.newDate('new'), selectedDate: '' }); // setting all values to default if the calendar is closed
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
   };
 
+  // component to render a list of all the agendas/holidays
   renderAgendaList = () => {
     if(this.state.calendarHolidays.length > 0){
       return(
